@@ -25,8 +25,7 @@ func reader(file string) ([]int, []int) {
 
 	for scanner.Scan() {
 		text := scanner.Text()	
-		i, err := strconv.Atoi(text)
-		fmt.Printf("%s\n", i)
+		i, err := strconv.Atoi(text)	
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -46,26 +45,19 @@ func reader(file string) ([]int, []int) {
 	return list1, list2
 }
 
-type Counters struct {
-	counter []Counter
-}
 
-type Counter struct {
-	number int 
-	count int
-}
 func main() {
 	list1, list2 := reader("input.txt")
 	length := len(list1)
-	val := 0
+	m := make(map[int]int)	
 	for i := 0; i < length; i++ {
-		a := list1[i]
-		b := list2[i]
-		if a > b {
-			val = val + (a - b)
-		} else {
-			val = val + (b - a)
-		}
-		fmt.Println(val)
+		m[list2[i]] = m[list2[i]] + 1
 	}
+
+	val := 0
+
+	for i := 0; i < length; i++ {
+		val = val + (list1[i] * m[list1[i]])
+	}
+	fmt.Printf("%v\n", val)
 }
