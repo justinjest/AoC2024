@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"bufio"	
+	"log"
 	"os"
 	"strings"
 	"strconv"
@@ -32,15 +33,34 @@ func analysis(line []int) int {
 	} else if (dif <= -1) {
 		incCheck = -1
 	} else {
-		return 0
+		fmt.Printf("first two numbers match %v, %v\n", line[0], line[1])
+		return 0 
 	}	
 	for i := 0; i < len(line) - 1; i++ {	
 		dif = line[i] - line[i+1]	
 		if ((dif > 3 || dif < -3) || (dif * incCheck < 1)) {
-			return 0
+		return 0 
 		}	
 	}
+	fmt.Println("Valid")
 	return 1
+}
+
+func RemoveIndex(s []int, index int) []int {
+	ret := make([]int, 0)
+	ret = append(ret, s[:index]...)
+	return append(ret, s[index+1:]...)
+}
+
+func Verifier(list []int) int {
+	for i := 0; i < len(list); i++ {	
+		res := analysis(RemoveIndex(list, i))
+		if res == 1 {
+			return 1
+		}
+	}
+	return 0
+
 }
 
 func reader(file string) error {
@@ -53,13 +73,16 @@ func reader(file string) error {
 
 	scanner := bufio.NewScanner(f)
 	validLines := 0
+	lineCount := 0
 	for scanner.Scan() {
 		line, err := convertor(scanner.Text())
 		if err != nil {
 			fmt.Printf("Error converting line to ints %v\n", scanner.Text())
 		}
-		fmt.Printf("line: %v\n", line)
-		validLines += analysis(line)
+		valid := Verifier(line)
+		lineCount += 1
+		validLines += valid
+		fmt.Printf("%v valid lines out of %v\n", validLines, lineCount)
 	}
 
 	if err := scanner.Err(); err != nil {
@@ -71,5 +94,9 @@ func reader(file string) error {
 }
 
 func main() {
-	reader("input.txt")
+	err := reader("input.txt")
+
+	if err != nil {
+		log.Fatal(err)
+	}
 }
