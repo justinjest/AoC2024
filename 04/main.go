@@ -43,6 +43,23 @@ func findXMAS (input [][]byte, x, y int) (result int) {
 	return ltor + rtol + utod + dtou + diaur + diaul + diadr + diadl
 }
 
+func findcrossmas (input [][]byte, x, y int) (result int) {
+	if x == 0 || y == 0 || x == len(input) - 1 || y == len(input[0]) - 1 {
+		return 0
+	}
+	ul := input[x+1][y-1]
+	ur := input[x+1][y+1]
+	dl := input[x-1][y-1]
+	dr := input[x-1][y+1]
+
+	if (((ul == 77 && dr == 83) || (ul == 83 && dr == 77)) &&
+	((ur == 77 && dl == 83) || (ur == 83 && dl == 77))) {
+		return 1
+	}
+	
+	return 0
+}
+
 func diadr (input [][]byte, x, y int) (result int) {
 
 	// Searching only for left to right
@@ -156,8 +173,8 @@ func main() {
 	fmt.Printf("Rows: %v Cols: %v\n", len(data), len(data[0]))
 	for x := 0; x < len(data); x++ {
 		for y := 0; y < len(data[0]); y++ {
-			if data[x][y] == 88 {
-				result += findXMAS(data, x, y)	
+			if data[x][y] == 65{
+				result += findcrossmas(data, x, y)	
 			}
 		}
 	}
