@@ -48,6 +48,7 @@ func parsePages(input string) ([]string) {
 }
 
 func checkValid (pages string, instructions map[int][]int) (int) {
+
 	page := strings.Split(pages, ",")
 	for i := 0; i < len(page); i++ {
 		tmp, err := strconv.Atoi(page[i])
@@ -69,6 +70,45 @@ func checkValid (pages string, instructions map[int][]int) (int) {
 			}
 		}
 	}
+	return 1 
+
+}
+
+func correctErrors(pages string, instructions map[int][]int) (int){
+
+	page := strings.Split(pages, ",")
+	for i := 0; i < len(page); i++ {
+		tmp, err := strconv.Atoi(page[i])
+		if err != nil {
+			log.Fatalf("%v\n", err)
+		}
+		val, ok := instructions[tmp]
+		if ok {
+			for j := 0; j < len(page[:i]); j++ {
+				for k := 0; k < len(val); k++ {
+					tmp, err := strconv.Atoi(page[j])
+					if err != nil {
+						log.Fatalf("%v\n", err)
+					}
+					if val[k] == tmp {
+						val := page[j]
+						page[j] = page[i]
+						page[i] = val
+						break
+					}
+				}
+			}
+		}
+	}
+	ans, err := strconv.Atoi(page[len(page)/2])
+	if err != nil {
+		log.Fatalf("%v\n", err)
+	}
+	return ans
+}
+
+func getMiddle(pages string) (int) {
+	page := strings.Split(pages, ",")
 	output, err := strconv.Atoi(page[len(page)/2])
 	if err != nil {
 		log.Fatalf("%v\n", err)
@@ -84,9 +124,19 @@ func main() {
 	}
 	ins := parseInstructs(instructions)
 	pag := parsePages(pages)
+	wrong := make([]string,0)
 	val := 0
+	val2 := 0
 	for i := 0; i < len(pag); i++ {
-		val += checkValid(pag[i], ins)
+		if checkValid(pag[i], ins) == 1 {
+			val += getMiddle(pag[i])
+		} else {
+			wrong = append(wrong, pag[i])
+		}
+	}
+	for i := 0; i < len(wrong); i++ {
+		val2 += correctErrors(wrong[i], ins)
 	}
 	fmt.Printf("Value: %v\n", val)
+	fmt.Printf("Corrected: %v\n", val2)
 }
